@@ -1,0 +1,25 @@
+output_dir: outputs/eval/rl4vla_pi0
+seeds: [0, 1, 2]
+network: {host: 127.0.0.1, port: 5602}
+environment:
+  backend: pi0
+  mode: efficient
+  model: juexzz/INTACT-pi0-finetune-bridge
+  device: 0
+  split: test
+  num_envs: 64
+  scenes:
+    - PutOnPlateInScene25MultiCarrot-v1
+    - PutOnPlateInScene25MultiPlate-v1
+grounder:
+  enabled: true
+  prompt: guided
+  thinking: true
+  model: Qwen/Qwen3.5-9B
+  checkpoint: Damirchik/vla-grounder-qwen3.5-9b-rl4vla-pi0
+  device: 1
+  attention: sdpa
+  batch_size: 16
+  max_new_tokens: 2048
+  temperature: 0.6
+  top_p: 0.95

@@ -1,0 +1,20 @@
+output_dir: outputs/eval/vl_think_openvla_baseline
+seeds: [0, 1, 2]
+network: {host: 127.0.0.1, port: 5602}
+environment:
+  backend: openvla
+  mode: efficient
+  model: gen-robot/openvla-7b-rlvla-rl
+  device: 0
+  split: test
+  num_envs: 64
+  scenes:
+    - PutOnShapeInSceneMultiColor-v1
+    - PutOnColorInSceneMulti-v1
+    - PutOnSignTrafficInSceneMulti-v1
+    - PutOnLaundryIconInSceneMulti-v1
+    - PutOnWeatherIconInSceneMulti-v1
+    - PutOnArrowSignInSceneMulti-v1
+    - PutOnPublicInfoSignInSceneMulti-v1
+grounder:
+  enabled: false

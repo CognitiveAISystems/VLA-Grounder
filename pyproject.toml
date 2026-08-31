@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vla-grounder"
+version = "0.1.0"
+description = "Language-conditioning space optimization for frozen VLA models"
+readme = "README.md"
+requires-python = ">=3.10,<3.11"
+license = {file = "LICENSE"}
+dependencies = []
+
+[project.scripts]
+vla-grounder-train = "vla_grounder.training:main"
+vla-grounder-env = "vla_grounder.environment_server:main"
+vla-grounder-eval = "vla_grounder.evaluation:main"
+vla-grounder-video = "vla_grounder.video:main"
+vla-grounder-merge-lora = "vla_grounder.merge_lora:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"

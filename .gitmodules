@@ -1,0 +1,6 @@
+[submodule "external/BlindVLA"]
+	path = external/BlindVLA
+	url = https://github.com/CognitiveAISystems/BlindVLA.git
+[submodule "external/RL4VLA"]
+	path = external/RL4VLA
+	url = https://github.com/gen-robot/RL4VLA.git

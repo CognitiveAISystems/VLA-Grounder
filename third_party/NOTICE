@@ -1,0 +1,22 @@
+Third-party provenance
+======================
+
+The files under the following directories are derived from the INT-ACT
+research code:
+
+    third_party/agent
+    third_party/experiments
+    third_party/utils
+
+Upstream project:
+
+    From Intention to Execution: Probing the Generalization Boundaries of
+    Vision-Language-Action Models
+    https://github.com/ai4ce/INT-ACT
+
+These files remain copyright of their original authors and are not covered by
+the Apache License 2.0 applied to VLA Grounder. No separate software license
+was present in the upstream INT-ACT repository when this notice was prepared.
+
+The remaining third-party components retain the license and attribution terms
+provided by their respective upstream projects.

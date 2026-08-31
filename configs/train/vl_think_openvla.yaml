@@ -1,0 +1,42 @@
+output_dir: outputs/train/vl_think_openvla
+network: {host: 127.0.0.1, port: 5601}
+environment:
+  backend: openvla
+  mode: parallel
+  model: gen-robot/openvla-7b-rlvla-rl
+  device: 0
+  split: train
+  num_envs: 12
+  steps_per_epoch: 20
+  rollouts_per_command: 1
+  baseline_rollouts: 4
+  scenes:
+    - PutOnShapeInSceneMultiColor-v1
+    - PutOnColorInSceneMulti-v1
+    - PutOnSignTrafficInSceneMulti-v1
+    - PutOnLaundryIconInSceneMulti-v1
+    - PutOnWeatherIconInSceneMulti-v1
+    - PutOnArrowSignInSceneMulti-v1
+    - PutOnPublicInfoSignInSceneMulti-v1
+model:
+  name: Qwen/Qwen3.5-9B
+  prompt: guided
+  thinking: true
+  device: 1
+  attention: sdpa
+  gradient_checkpointing: false
+  lora_rank: 32
+  lora_alpha: 64
+  lora_dropout: 0.05
+  lora_exclude: [lm_head, embed_tokens, visual]
+training:
+  learning_rate: 5.0e-6
+  group_size: 8
+  gradient_accumulation: 8
+  max_completion_length: 2048
+  max_steps: 1600
+  kl_coefficient: 0.01
+  temperature: 1.0
+  top_p: 0.95
+  bf16: true
+callback: {save_every: 400}

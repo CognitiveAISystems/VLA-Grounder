@@ -1,0 +1,37 @@
+output_dir: outputs/train/rl4vla_pi0
+network: {host: 127.0.0.1, port: 5610}
+environment:
+  backend: pi0
+  mode: parallel
+  model: juexzz/INTACT-pi0-finetune-bridge
+  device: 0
+  split: train
+  num_envs: 56
+  steps_per_epoch: 11
+  rollouts_per_command: 6
+  baseline_rollouts: 8
+  scenes:
+    - PutOnPlateInScene25MultiPlate-v1
+    - PutOnPlateInScene25MultiCarrot-v1
+model:
+  name: Qwen/Qwen3.5-9B
+  prompt: guided
+  thinking: true
+  device: 1
+  attention: sdpa
+  gradient_checkpointing: false
+  lora_rank: 32
+  lora_alpha: 64
+  lora_dropout: 0.05
+  lora_exclude: [lm_head, embed_tokens, visual]
+training:
+  learning_rate: 5.0e-6
+  group_size: 8
+  gradient_accumulation: 8
+  max_completion_length: 2048
+  max_steps: 1200
+  kl_coefficient: 0.01
+  temperature: 1.0
+  top_p: 0.95
+  bf16: true
+callback: {save_every: 300}

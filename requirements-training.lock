@@ -1,0 +1,14 @@
+accelerate==1.13.0
+datasets==4.8.5
+numpy==2.2.6
+peft==0.19.1
+pillow==12.1.1
+pyyaml==6.0.3
+pyzmq==27.1.0
+qwen-vl-utils==0.0.14
+safetensors==0.7.0
+tensorboard==2.20.0
+tokenizers==0.22.2
+transformers==5.5.4
+trl==1.2.0
+tqdm==4.67.3
