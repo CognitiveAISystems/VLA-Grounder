@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  <meta name="title" content="VLA Grounder">
+  <meta name="description" content="Project page for VLA Grounder: language-conditioning space optimization for black-box Vision-Language-Action models.">
+  <meta name="keywords" content="Vision-Language-Action, VLA, robotics, reinforcement learning, prompt optimization, language conditioning, VLA Grounder">
+  <meta name="author" content="Damir Shodiev, Aleksei Staroverov, Nikita Kachaev, Alexey K. Kovalev, Aleksandr I. Panov">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="English">
+  <link rel="canonical" href="https://cognitiveaisystems.github.io/VLA-Grounder/">
+
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="VLA Grounder">
+  <meta property="og:title" content="VLA Grounder: Language-Conditioning Space Optimization for Black-Box VLA Models">
+  <meta property="og:description" content="Improving frozen VLA policies by optimizing the language command that conditions them, without updating action weights.">
+  <meta property="og:url" content="https://cognitiveaisystems.github.io/VLA-Grounder/">
+  <meta property="og:image" content="https://cognitiveaisystems.github.io/VLA-Grounder/static/images/intro22.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="VLA Grounder">
+  <meta name="twitter:description" content="Language-conditioning space optimization for frozen black-box VLA models.">
+  <meta name="twitter:image" content="https://cognitiveaisystems.github.io/VLA-Grounder/static/images/intro22.png">
+
+  <meta name="citation_title" content="VLA Grounder: Language-Conditioning Space Optimization for Black-Box VLA Models">
+  <meta name="citation_author" content="Shodiev, Damir">
+  <meta name="citation_author" content="Staroverov, Aleksei">
+  <meta name="citation_author" content="Kachaev, Nikita">
+  <meta name="citation_author" content="Kovalev, Alexey K.">
+  <meta name="citation_author" content="Panov, Aleksandr I.">
+  <meta name="citation_publication_date" content="2026">
+  <meta name="citation_pdf_url" content="https://openreview.net/pdf?id=LyKpta1bJ0">
+
+  <title>VLA Grounder</title>
+
+  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
+  <link rel="apple-touch-icon" href="static/images/icon.png">
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+  <link rel="preload" href="static/css/bulma-carousel.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="static/css/bulma-slider.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="static/css/fontawesome.all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+    <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  </noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script defer src="static/js/bulma-carousel.min.js"></script>
+  <script defer src="static/js/bulma-slider.min.js"></script>
+  <script defer src="static/js/index.js"></script>
+
+  <style>
+    .paper-kicker {
+      color: #2563eb;
+      font-weight: 800;
+      letter-spacing: 0;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+    }
+
+    .stat-grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin: 1.5rem 0 0;
+    }
+
+    .stat-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgb(15 23 42 / 0.06);
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .stat-card strong {
+      color: #1e293b;
+      display: block;
+      font-size: 1.55rem;
+      line-height: 1.1;
+    }
+
+    .stat-card span {
+      color: #64748b;
+      display: block;
+      font-size: 0.92rem;
+      margin-top: 0.35rem;
+    }
+
+    .figure-caption {
+      color: #555;
+      font-size: 0.9rem;
+      line-height: 1.45;
+      margin: 0.65rem auto 1.5rem;
+      max-width: 95%;
+      text-align: left;
+    }
+
+    .result-table {
+      font-size: 0.88rem;
+      margin: 1.25rem 0;
+      overflow-x: auto;
+    }
+
+    .result-table table {
+      background: #fff;
+      border-collapse: collapse;
+      min-width: 760px;
+      width: 100%;
+    }
+
+    .result-table th,
+    .result-table td {
+      border-bottom: 1px solid #e2e8f0;
+      padding: 0.55rem 0.65rem;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .result-table th:first-child,
+    .result-table td:first-child {
+      text-align: left;
+    }
+
+    .result-table thead th {
+      color: #1e293b;
+      font-weight: 800;
+    }
+
+    .result-table .best {
+      color: #166534;
+      font-weight: 800;
+    }
+
+    .rewrite-grid {
+      display: grid;
+      gap: 0.85rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 1rem;
+    }
+
+    .rewrite-grid p {
+      background: #f8fafc;
+      border-left: 4px solid #2563eb;
+      border-radius: 8px;
+      margin: 0;
+      padding: 0.85rem 1rem;
+    }
+
+    .bibtex-header {
+      align-items: center;
+      display: flex;
+      gap: 1rem;
+      justify-content: space-between;
+    }
+
+    .copy-bibtex-btn {
+      align-items: center;
+      background: #1e293b;
+      border: 0;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      display: inline-flex;
+      font-weight: 700;
+      gap: 0.45rem;
+      padding: 0.7rem 1rem;
+    }
+
+    .copy-bibtex-btn:hover {
+      background: #2563eb;
+    }
+
+    pre {
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 768px) {
+      .publication-title {
+        font-size: 2rem !important;
+      }
+
+      .stat-grid,
+      .rewrite-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-body {
+        padding: 2.5rem 1rem;
+      }
+    }
+  </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    "headline": "VLA Grounder: Language-Conditioning Space Optimization for Black-Box VLA Models",
+    "description": "VLA Grounder improves frozen VLA policies by optimizing upstream language-conditioning commands with sparse rollout rewards.",
+    "url": "https://cognitiveaisystems.github.io/VLA-Grounder/",
+    "image": "https://cognitiveaisystems.github.io/VLA-Grounder/static/images/intro22.png",
+    "datePublished": "2026",
+    "isAccessibleForFree": true,
+    "keywords": ["Vision-Language-Action", "robotics", "reinforcement learning", "prompt optimization", "language conditioning"]
+  }
+  </script>
+</head>
+<body>
+  <button class="scroll-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="Scroll to top" aria-label="Scroll to top">
+    <i class="fas fa-chevron-up"></i>
+  </button>
+
+  <main id="main-content">
+    <section class="hero">
+      <div class="hero-body">
+        <div class="container is-max-desktop">
+          <div class="columns is-centered">
+            <div class="column has-text-centered">
+              <p class="paper-kicker">VLA Grounder</p>
+              <h1 class="title is-1 publication-title">VLA Grounder: Language-Conditioning Space Optimization for Black-Box VLA Models</h1>
+              <div class="is-size-5 publication-authors">
+                <span class="author-block">Damir Shodiev<sup>2</sup>,</span>
+                <span class="author-block">Aleksei Staroverov<sup>1,2,3</sup>,</span>
+                <span class="author-block"><a href="https://tttonyalpha.github.io" target="_blank">Nikita Kachaev</a><sup>1</sup>,</span>
+                <span class="author-block"><a href="https://scholar.google.com/citations?user=N1zWb74AAAAJ" target="_blank">Alexey K. Kovalev</a><sup>1,2</sup>,</span>
+                <span class="author-block"><a href="https://grafft.github.io/" target="_blank">Aleksandr I. Panov</a><sup>1,2</sup></span>
+              </div>
+              <div class="is-size-6 publication-authors">
+                <span class="author-block"><sup>1</sup>AXXX</span>
+                <span class="author-block"><sup>2</sup>MIRAI</span>
+                <span class="author-block"><sup>3</sup>MISIS</span>
+              </div>
+
+              <div class="column has-text-centered">
+                <div class="publication-links">
+                  <span class="link-block">
+                    <a href="https://openreview.net/forum?id=LyKpta1bJ0" target="_blank" class="external-link button is-normal is-rounded is-dark">
+                      <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                      <span>Paper</span>
+                    </a>
+                  </span>
+                  <span class="link-block" style="margin-top: 4.5px; display: inline-block;">
+                    <span class="button is-normal is-rounded is-dark" style="cursor: default; pointer-events: none;">
+                      Views:&nbsp;<span id="busuanzi_value_page_pv">Loading</span>
+                    </span>
+                  </span>
+                  <span class="link-block">
+                    <a href="#BibTeX" class="external-link button is-normal is-rounded is-dark">
+                      <span class="icon"><i class="fas fa-quote-right"></i></span>
+                      <span>BibTeX</span>
+                    </a>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="hero teaser">
+      <div class="container is-max-desktop" style="max-width: 980px;">
+        <div class="hero-body" style="padding-top: 1rem; padding-bottom: 1rem;">
+          <img src="static/images/intro22.png" alt="VLA Grounder visual overview" style="width: 100%; height: auto; display: block; margin: 0 auto; border-radius: 12px; box-shadow: none; transition: none;">
+          <p class="figure-caption">
+            <strong>Language-conditioning space optimization.</strong> A failure-derived command-space prior conditions a pre-trained VLM to translate the user instruction and scene image into a short VLA-grounded command. The command conditions a frozen VLA policy, improving action success without updating VLA weights.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section hero is-light">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered has-text-centered">
+          <div class="column is-four-fifths">
+            <h2 class="title is-3">Abstract</h2>
+            <div class="content has-text-justified">
+              <p>Vision-Language-Action (VLA) models are commonly treated as end-to-end action policies conditioned on natural-language task descriptions. In practice, however, their behavior often depends sharply on how the instruction is phrased, suggesting that language is not merely a task label but an optimizable conditioning input. We study whether frozen VLA policies can be improved by optimizing language space rather than updating action weights. Our method introduces a language-conditioning space policy that translates a human instruction into a short VLA-grounded command using object appearance, spatial relations, and target-grounding cues. The language-conditioning space policy is initialized with a failure-derived command-space prior and optimized with reinforcement learning from sparse task-completion rewards, while the downstream VLA remains fully frozen. This yields language-conditioning space optimization: RL discovers which VLA-grounded commands best elicit successful behavior from the frozen action policy. Experiments on RL4VLA and VL-Think show that language-conditioning space optimization improves success on instruction-sensitive, symbolic, and multi-object manipulation tasks, demonstrating that language can serve as an optimizable variable for robot foundation models.</p>
+            </div>
+            <div class="stat-grid">
+              <div class="stat-card"><strong>Frozen</strong><span>VLA action policies</span></div>
+              <div class="stat-card"><strong>RL</strong><span>in language space</span></div>
+              <div class="stat-card"><strong>VL-Think</strong><span>symbolic grounding</span></div>
+              <div class="stat-card"><strong>RL4VLA</strong><span>semantic generalization</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="motivation">
+      <div class="container is-max-desktop content">
+        <h2 class="title is-3">Why Optimize Language?</h2>
+        <p>
+          VLA models often react very differently to semantically equivalent commands. A raw instruction such as <em>put bread on plate</em> can fail even when the object and target are visible, while a grounded rewrite such as <em>pick up the brown round object and put it on the yellow plate</em> can expose the cues the frozen policy needs.
+        </p>
+        <p>
+          VLA Grounder treats the command as the adaptation variable. Instead of updating the downstream action model, it learns an upstream language-conditioning policy that maps the image and human instruction into a concise command better aligned with the frozen VLA's perceptual and linguistic priors.
+        </p>
+      </div>
+    </section>
+
+    <section class="section hero is-light" id="method">
+      <div class="container is-max-desktop content">
+        <h2 class="title is-3">Method</h2>
+        <img src="static/images/guidvla_scheme_1.png" alt="VLA Grounder model architecture and training loop" style="width: 100%; border-radius: 12px; transition: none; display: block; margin: 0 auto;">
+        <p class="figure-caption">
+          <strong>Model architecture and training loop.</strong> A scene-conditioned language-conditioning policy is inserted before a frozen VLA action policy. During training, only the language policy is optimized from sparse rollout rewards; the VLA weights remain fixed.
+        </p>
+        <p>
+          For each image-instruction pair, the language-conditioning policy samples candidate commands. The frozen VLA executes a rollout under each command, producing a sparse task-completion reward. GRPO compares rewards within the sampled group and updates only the command-generating policy. At inference time, the system samples one optimized command and runs the frozen VLA normally.
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="results">
+      <div class="container is-max-desktop content">
+        <h2 class="title is-3">Results</h2>
+        <p>
+          Experiments on VL-Think and RL4VLA show that changing only the language input can substantially improve frozen VLA policies. The gains are especially visible on symbolic VL-Think tasks, where raw target names can be replaced with more visual or spatial command aliases.
+        </p>
+        <div class="result-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Task</th>
+                <th>pi0 orig</th>
+                <th>pi0 + VLA Grounder</th>
+                <th>OpenVLA orig</th>
+                <th>OpenVLA + VLA Grounder</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Arrow</td><td>4.2</td><td class="best">41.7</td><td>13.5</td><td class="best">62.5</td></tr>
+              <tr><td>Color</td><td>32.3</td><td class="best">40.1</td><td>55.7</td><td class="best">82.8</td></tr>
+              <tr><td>Laundry</td><td>12.5</td><td class="best">25.0</td><td>15.6</td><td class="best">37.5</td></tr>
+              <tr><td>Public Info</td><td>9.4</td><td class="best">43.8</td><td>21.4</td><td class="best">65.6</td></tr>
+              <tr><td>Shape</td><td>12.0</td><td class="best">43.2</td><td>27.6</td><td class="best">74.5</td></tr>
+              <tr><td>Traffic</td><td>5.7</td><td class="best">32.3</td><td>16.7</td><td class="best">63.0</td></tr>
+              <tr><td>Weather</td><td>12.0</td><td class="best">44.8</td><td>20.3</td><td class="best">61.5</td></tr>
+              <tr><td><strong>Average</strong></td><td>12.6</td><td class="best">38.7</td><td>24.4</td><td class="best">63.9</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="figure-caption">
+          <strong>Main VL-Think results.</strong> Success rates are shown as percentages. All VLA backbones are frozen; only the language-conditioning policy is optimized.
+        </p>
+      </div>
+    </section>
+
+    <section class="section hero is-light" id="qualitative">
+      <div class="container is-max-desktop content">
+        <h2 class="title is-3">Command Rewrites Change Behavior</h2>
+        <img src="static/images/rephrase_sample.png" alt="Trajectory comparison between default and rewritten commands" style="width: 100%; border-radius: 12px; transition: none; display: block; margin: 0 auto;">
+        <p class="figure-caption">
+          <strong>Trajectory comparison on RL4VLA MultiObject with frozen pi0.</strong> The default command under-specifies the object and causes unstable motion, while the rewritten command adds visible grounding cues and yields a more direct successful trajectory.
+        </p>
+        <div class="rewrite-grid">
+          <p><strong>Abstract target:</strong> replace labels like <em>sunrise icon</em> with visible cues like <em>white card with yellow sun</em>.</p>
+          <p><strong>Rare object name:</strong> replace categories like <em>champagne glass</em> with shape/material cues like <em>tall white glass</em>.</p>
+          <p><strong>Multi-object ambiguity:</strong> add spatial cues such as <em>left yellow plate</em>.</p>
+          <p><strong>Weak object grounding:</strong> replace names like <em>bread</em> with visual cues like <em>brown round object</em>.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="training">
+      <div class="container is-max-desktop content">
+        <h2 class="title is-3">Training Dynamics</h2>
+        <img src="static/images/grpo_training.png" alt="GRPO training curves for VL-Think tasks" style="width: 100%; border-radius: 12px; transition: none; display: block; margin: 0 auto;">
+        <p class="figure-caption">
+          <strong>GRPO training for VL-Think tasks.</strong> Each panel reports rollout success rate over training steps for a symbolic grounding category. Upward trends indicate that reward updates to the language-conditioning policy improve command selection while the downstream VLA remains frozen.
+        </p>
+      </div>
+    </section>
+
+    <section class="section hero is-light" id="prompt">
+      <div class="container is-max-desktop content">
+        <h2 class="title is-3">Prompt Format</h2>
+        <div class="columns is-vcentered">
+          <div class="column is-two-thirds">
+            <img src="static/images/prompt_example_vert.png" alt="Prompt format example for VLA Grounder" style="width: 100%; border-radius: 12px; transition: none; display: block; margin: 0 auto;">
+          </div>
+          <div class="column">
+            <p>
+              The language policy receives the scene image, original task, and a structured instruction asking it to identify source-object and target cues. Only the final command inside the answer field is passed to the frozen VLA; intermediate reasoning is used only to choose a better command.
+            </p>
+            <img src="static/images/prompt_design.png" alt="Language aliasing and structured command exploration" style="width: 75%; border-radius: 12px; transition: none; display: block; margin: 1rem auto 0;">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="BibTeX">
+      <div class="container is-max-desktop content">
+        <div class="bibtex-header">
+          <h2 class="title">BibTeX</h2>
+          <button class="copy-bibtex-btn" onclick="navigator.clipboard.writeText(document.getElementById('bibtex-code').innerText)" title="Copy BibTeX to clipboard">
+            <i class="fas fa-copy"></i>
+            <span>Copy</span>
+          </button>
+        </div>
+        <pre id="bibtex-code"><code>@inproceedings{shodievvla,
+  title={VLA Grounder: Language-Conditioning Space Optimization for Black-Box VLA Models},
+  author={Shodiev, Damir and Staroverov, Aleksei and Kachaev, Nikita and Kovalev, Alexey and Panov, Aleksandr},
+  booktitle={Decision-Making from Offline Datasets to Online Adaptation: Black-Box Optimization to Reinforcement Learning}
+}</code></pre>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-8">
+          <div class="content">
+            <p>
+              This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a> adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
